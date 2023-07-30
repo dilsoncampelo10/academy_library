@@ -4,43 +4,83 @@ namespace core;
 
 class Core
 {
-    private $url;
+
+    private static Core $instance;
+
+    private static $url;
+    private static $defaultController;
+    private static $defaultAction;
+    private static $defaultParams;
 
     public function __construct()
     {
-        $this->run();
+        self::getInstance();
     }
 
-    private function run(): void
+    private static function run(): void
     {
-        $defaultController = "HomeController";
-        $defaultAction = "index";
-        $defaultParams = [];
+        self::setDefault();
 
-        $this->url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
+        self::getUrl();
 
-        if ($this->url != "") {
-            $this->url = explode("/", $this->url);
-            $defaultController = ucfirst($this->url[0]) . "Controller";
-            array_shift($this->url);
+        self::checkUrl();
 
-            if ($this->url[0] != "") {
-                $defaultAction = $this->url[0];
-                array_shift($this->url);
-                if (count($this->url) > 0) {
-                    $defaultParams = $this->url;
+        self::checkExistsController();
+
+        self::invokeController();
+    }
+
+    public static function getInstance()
+    {
+        if (!isset(self::$instance)) {
+            self::run();
+        }
+
+        return self::$instance;
+    }
+
+    private static function getUrl(): void
+    {
+        self::$url = filter_input(INPUT_GET, 'url', FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+
+    private static function checkUrl(): void
+    {
+        if (self::$url != "") {
+            self::$url = explode("/", self::$url);
+            self::$defaultController = ucfirst(self::$url[0]) . "Controller";
+            array_shift(self::$url);
+
+            if (self::$url[0] != "") {
+                self::$defaultAction = self::$url[0];
+                array_shift(self::$url);
+                if (count(self::$url) > 0) {
+                    self::$defaultParams = self::$url;
                 }
             }
         }
+    }
 
-        if (!file_exists("../app/controllers" . $defaultController . ".php") || !method_exists("app\\controllers\\" . $defaultController, $defaultAction)) {
-            $defaultController = "ErrorController";
-            $defaultAction = "index";
+    private static function checkExistsController(): void
+    {
+        if (!file_exists("../app/controllers" . self::$defaultController . ".php") || !method_exists("app\\controllers\\" . self::$defaultController, self::$defaultAction)) {
+            self::$defaultController = "ErrorController";
+            self::$defaultAction = "index";
         }
+    }
 
-        $newController = "app\\controllers\\" . $defaultController;
+    private static function invokeController(): void
+    {
+        $newController = "app\\controllers\\" . self::$defaultController;
         $c = new $newController();
 
-        call_user_func_array([$c, $defaultAction], $defaultParams);
+        call_user_func_array([$c, self::$defaultAction], self::$defaultParams);
+    }
+
+    private static function setDefault()
+    {
+        self::$defaultController = "HomeController";
+        self::$defaultAction = "index";
+        self::$defaultParams = [];
     }
 }
