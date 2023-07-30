@@ -4,7 +4,7 @@ namespace core;
 
 class Core
 {
-    private string $url;
+    private $url;
 
     public function __construct()
     {
