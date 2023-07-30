@@ -63,7 +63,7 @@ class Core
 
     private static function checkExistsController(): void
     {
-        if (!file_exists("../app/controllers" . self::$defaultController . ".php") || !method_exists("app\\controllers\\" . self::$defaultController, self::$defaultAction)) {
+        if (!file_exists("app/controllers/" . self::$defaultController . ".php") || !method_exists("app\\controllers\\" . self::$defaultController, self::$defaultAction)) {
             self::$defaultController = "ErrorController";
             self::$defaultAction = "index";
         }
