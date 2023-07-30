@@ -2,8 +2,12 @@
 
 namespace app\controllers;
 
-class ErrorController {
-    public function index(){
-        echo "Erro";
+use core\Controller;
+
+class ErrorController extends Controller
+{
+    public function index()
+    {
+        $this->view("errors/404");
     }
 }
