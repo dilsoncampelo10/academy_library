@@ -9,12 +9,12 @@ class Connection
 {
     private static $instance;
     private $conn;
-
-    private const DRIVER = "mysql";
-    private const HOST = "localhost";
-    private const DBNAME = "academy_library";
-    private const USER = "root";
-    private const PASSWORD = "";
+    
+    private const DRIVER = $_ENV["DB_DRIVER"];
+    private const HOST = $_ENV['DB_HOST'];
+    private const DBNAME = $_ENV['DB_NAME'];
+    private const USER = $_ENV['DB_USER'];
+    private const PASSWORD = $_ENV['DB_PASSWORD'];
 
     private function __construct()
     {
