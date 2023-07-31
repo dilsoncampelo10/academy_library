@@ -2,10 +2,15 @@
 
 namespace app\controllers;
 
-class HomeController
+use core\Controller;
+
+class HomeController extends Controller
 {
     public function index()
     {
-        echo 'Hello';
+        $data = [
+            "name" => "Dilson"
+        ];
+        $this->viewWithTemplate("main", "home", $data);
     }
 }
